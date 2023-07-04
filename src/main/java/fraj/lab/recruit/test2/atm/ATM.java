@@ -1,5 +1,7 @@
 package fraj.lab.recruit.test2.atm;
 
+import static fraj.lab.recruit.test2.atm.PaymentStatus.FAILURE;
+
 /**
  * A component that implements the cash withdrawal process on an ATM.
  */
@@ -34,12 +36,16 @@ public class ATM {
 		if (locAmount <= 0) {
 			throw new ATMTechnicalException();
 		}
+
 		if (! cashManager.canDeliver(locAmount)) {
 			return ATMStatus.CASH_NOT_AVAILABLE;
 		}
-		paymentProcessor.pay(locAmount);
+
+		if(FAILURE.equals(paymentProcessor.pay(locAmount))) {
+			throw new ATMTechnicalException();
+		}
+
 		cashManager.deliver(locAmount);
 		return ATMStatus.DONE;
 	}
-
 }
